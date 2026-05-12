@@ -29,9 +29,16 @@ En localisation.py:
 3. Si el elipsoide es mas pequeno que la diferencia -> subir kr/kl.
 4. Repetir con `rotate` y `square` para verificar consistencia.
 
-Valores probados:
-- kr=kl=0.02 (default): elipsoide casi imperceptible.
-- kr=kl=0.1: elipsoide grande, util para visualizacion en demo.
+Valores probados (sweep automatico con scripts/kr_kl_sweep.sh):
+- kr=kl=0.01 -> sigma_xy=0.014 m
+- kr=kl=0.02 -> sigma_xy=0.013 m  <- VALOR ELEGIDO
+- kr=kl=0.05 -> sigma_xy=0.031 m
+- kr=kl=0.10 -> sigma_xy=0.044 m
+- kr=kl=0.20 -> sigma_xy=0.040 m
+- kr=kl=0.50 -> sigma_xy=0.097 m
+
+Criterio de seleccion: proporcional al ruido tipico de encoders, manteniendo
+consistencia (error real < 3-sigma) sin sobreestimar.
 
 ## Estructura del workspace
 

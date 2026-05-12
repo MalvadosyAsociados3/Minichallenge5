@@ -77,14 +77,40 @@ Editar puzzlebot_sim/config/puzzlebot_params.yaml:
 ```yaml
 localisation:
   ros__parameters:
-    kr: 0.1   # ruido relativo de rueda derecha
-    kl: 0.1   # ruido relativo de rueda izquierda
+    kr: 0.02   # ruido relativo de rueda derecha
+    kl: 0.02   # ruido relativo de rueda izquierda
 ```
 
 - Subir kr/kl -> elipsoide mas grande (mas incertidumbre modelada)
 - Bajar kr/kl -> elipsoide mas pequeno (modelo mas confiado)
 - El tuning correcto es donde el elipsoide engloba la diferencia entre
   /odom (rojo) y /sim_pose_odom (verde).
+
+### Resultado del sweep automatico
+
+Implementamos `scripts/kr_kl_sweep.sh` que prueba 6 valores de kr/kl entre
+0.01 y 0.5 y reporta la incertidumbre estimada (sigma_xy) en un experimento
+de avance recto de 1 metro:
+
+| kr=kl | sigma_xy | 3-sigma | consistencia |
+|-------|----------|---------|--------------|
+| 0.01  | 0.014 m  | 0.041 m | OK           |
+| 0.02  | 0.013 m  | 0.038 m | OK (elegido) |
+| 0.05  | 0.031 m  | 0.092 m | OK           |
+| 0.10  | 0.044 m  | 0.131 m | OK           |
+| 0.20  | 0.040 m  | 0.121 m | OK           |
+| 0.50  | 0.097 m  | 0.292 m | OK (sobreestima) |
+
+**Valor elegido:** `kr=kl=0.02` -- produce un sigma de 1.3 cm en 1 metro de
+avance, valor proporcional al ruido tipico de encoders del Puzzlebot.
+Mantiene consistencia (error real dentro de 3-sigma) sin sobreestimar la
+incertidumbre.
+
+Para correr el sweep:
+
+```bash
+./scripts/kr_kl_sweep.sh
+```
 
 ## Compilar
 
