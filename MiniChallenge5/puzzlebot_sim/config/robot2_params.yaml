@@ -1,0 +1,53 @@
+# Parametros del robot2 (namespace /robot2)
+# Inicia en (2.0, 0.0, pi/2) y sigue una trayectoria cuadrada.
+robot2:
+  puzzlebot_sim:
+    ros__parameters:
+      wheel_radius: 0.05
+      wheel_base: 0.19
+      update_rate: 50.0
+      publish_tf: false
+      initial_x: 2.0
+      initial_y: 0.0
+      initial_theta: 1.5708
+      odom_frame: robot2/odom
+      base_frame: robot2/base_footprint
+
+  localisation:
+    ros__parameters:
+      wheel_radius: 0.05
+      wheel_base: 0.19
+      update_rate: 50.0
+      publish_map_odom_tf: true
+      world_frame: world
+      odom_frame: robot2/odom
+      base_frame: robot2/base_footprint
+      initial_x: 2.0
+      initial_y: 0.0
+      initial_theta: 1.5708
+      # Constantes de ruido del modelo de propagacion de covarianza.
+      # Sigma_Delta = diag(kr*|wr|, kl*|wl|). Calibrar segun Task 2.
+      kr: 0.02
+      kl: 0.02
+
+  point_generator:
+    ros__parameters:
+      # Trayectoria CUADRADO 1m referida al odom de robot2.
+      # Como robot2 arranca en (2,0) con yaw=pi/2, los waypoints siguen
+      # estando expresados en su propio odom (que coincide con world).
+      waypoints_x: [3.0, 3.0, 2.0, 2.0]
+      waypoints_y: [0.0, 1.0, 1.0, 0.0]
+      loop_trajectory: true
+      startup_delay: 1.5
+      frame_id: robot2/odom
+
+  control_node:
+    ros__parameters:
+      max_linear_vel: 0.2
+      max_angular_vel: 1.0
+      k_linear: 0.9
+      k_angular: 5.0
+      yaw_tolerance: 0.05
+      position_tolerance: 0.08
+      stabilize_time: 0.5
+      control_rate: 20.0

@@ -1,0 +1,51 @@
+# Parametros del robot1 (namespace /robot1)
+# Inicia en (0.0, 0.0, 0.0) y sigue una trayectoria triangular.
+robot1:
+  puzzlebot_sim:
+    ros__parameters:
+      wheel_radius: 0.05
+      wheel_base: 0.19
+      update_rate: 50.0
+      publish_tf: false
+      initial_x: 0.0
+      initial_y: 0.0
+      initial_theta: 0.0
+      odom_frame: robot1/odom
+      base_frame: robot1/base_footprint
+
+  localisation:
+    ros__parameters:
+      wheel_radius: 0.05
+      wheel_base: 0.19
+      update_rate: 50.0
+      publish_map_odom_tf: true
+      world_frame: world
+      odom_frame: robot1/odom
+      base_frame: robot1/base_footprint
+      initial_x: 0.0
+      initial_y: 0.0
+      initial_theta: 0.0
+      # Constantes de ruido del modelo de propagacion de covarianza.
+      # Sigma_Delta = diag(kr*|wr|, kl*|wl|). Calibrar segun Task 2.
+      kr: 0.02
+      kl: 0.02
+
+  point_generator:
+    ros__parameters:
+      # Trayectoria TRIANGULO referida al odom de robot1.
+      waypoints_x: [1.0, 0.5, 0.0]
+      waypoints_y: [0.0, 0.866, 0.0]
+      loop_trajectory: true
+      startup_delay: 1.5
+      frame_id: robot1/odom
+
+  control_node:
+    ros__parameters:
+      max_linear_vel: 0.2
+      max_angular_vel: 1.0
+      k_linear: 0.9
+      k_angular: 5.0
+      yaw_tolerance: 0.05
+      position_tolerance: 0.08
+      stabilize_time: 0.5
+      control_rate: 20.0

@@ -1,0 +1,39 @@
+# Parametros comunes
+# CUADRADO de 1 m.
+
+
+puzzlebot_sim:
+  ros__parameters:
+    wheel_radius: 0.05
+    wheel_base: 0.19
+    update_rate: 50.0
+    publish_tf: false   # localisation se encarga del TF odom->base_footprint
+
+localisation:
+  ros__parameters:
+    wheel_radius: 0.05
+    wheel_base: 0.19
+    update_rate: 50.0
+    publish_map_odom_tf: true
+    odom_frame: odom
+    base_frame: base_footprint
+
+point_generator:
+  ros__parameters:
+    # Trayectoria CUADRADO 1m
+    waypoints_x: [1.0, 1.0, 0.0, 0.0]
+    waypoints_y: [0.0, 1.0, 1.0, 0.0]
+    loop_trajectory: true
+    startup_delay: 1.5
+    frame_id: odom
+
+control:
+  ros__parameters:
+    max_linear_vel: 0.2
+    max_angular_vel: 1.0
+    k_linear: 0.9
+    k_angular: 5.0
+    yaw_tolerance: 0.05
+    position_tolerance: 0.08
+    stabilize_time: 0.5
+    control_rate: 20.0
