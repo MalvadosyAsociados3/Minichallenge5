@@ -32,6 +32,7 @@ setup(
             'control = puzzlebot_sim.control:main',
             'point_generator = puzzlebot_sim.point_generator:main',
             'joint_state_publisher = puzzlebot_sim.joint_state_publisher:main',
+            'experiment_runner = puzzlebot_sim.experiment_runner:main',
         ],
     },
 )

@@ -26,6 +26,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 from geometry_msgs.msg import Twist, PoseStamped, TransformStamped
+from nav_msgs.msg import Odometry
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float32
 from tf2_ros import TransformBroadcaster
@@ -82,8 +83,10 @@ class PuzzlebotSimulator(Node):
         self.wl_pub = self.create_publisher(Float32, 'wl', qos)
         self.joint_pub = self.create_publisher(JointState, 'joint_states', qos)
         self.pose_pub = self.create_publisher(PoseStamped, 'sim_pose', qos)
+        self.gt_odom_pub = self.create_publisher(Odometry, 'sim_pose_odom', qos)
 
         self.tf_broadcaster = TransformBroadcaster(self) if self.publish_tf else None
+        self.gt_tf_broadcaster = TransformBroadcaster(self)
 
         self.timer = self.create_timer(self.dt, self.step)
         self.get_logger().info(
@@ -158,6 +161,38 @@ class PuzzlebotSimulator(Node):
             tf.transform.rotation.y = float(q[2])
             tf.transform.rotation.z = float(q[3])
             self.tf_broadcaster.sendTransform(tf)
+
+        # --- Ground-truth Odometry (sim_pose_odom) ---
+        gt_odom = Odometry()
+        gt_odom.header.stamp = now
+        gt_odom.header.frame_id = 'map'
+        gt_odom.child_frame_id = 'sim_base_footprint'
+        gt_odom.pose.pose.position.x = float(self.x)
+        gt_odom.pose.pose.position.y = float(self.y)
+        gt_odom.pose.pose.position.z = 0.0
+        gt_odom.pose.pose.orientation.w = float(q[0])
+        gt_odom.pose.pose.orientation.x = float(q[1])
+        gt_odom.pose.pose.orientation.y = float(q[2])
+        gt_odom.pose.pose.orientation.z = float(q[3])
+        gt_odom.pose.covariance = [0.0] * 36
+        gt_odom.twist.twist.linear.x = float(v)
+        gt_odom.twist.twist.angular.z = float(w)
+        gt_odom.twist.covariance = [0.0] * 36
+        self.gt_odom_pub.publish(gt_odom)
+
+        # --- TF dinámico: map -> sim_base_footprint ---
+        gt_tf = TransformStamped()
+        gt_tf.header.stamp = now
+        gt_tf.header.frame_id = 'map'
+        gt_tf.child_frame_id = 'sim_base_footprint'
+        gt_tf.transform.translation.x = float(self.x)
+        gt_tf.transform.translation.y = float(self.y)
+        gt_tf.transform.translation.z = 0.0
+        gt_tf.transform.rotation.w = float(q[0])
+        gt_tf.transform.rotation.x = float(q[1])
+        gt_tf.transform.rotation.y = float(q[2])
+        gt_tf.transform.rotation.z = float(q[3])
+        self.gt_tf_broadcaster.sendTransform(gt_tf)
 
 
 def main(args=None):
